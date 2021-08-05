@@ -3,6 +3,9 @@ package com.elantsev.netology.diplomacloud.controller;
 import com.elantsev.netology.diplomacloud.dto.Login;
 import com.elantsev.netology.diplomacloud.dto.NewFileName;
 import com.elantsev.netology.diplomacloud.dto.Token;
+import com.elantsev.netology.diplomacloud.exception.ErrorBadCredentials;
+import com.elantsev.netology.diplomacloud.exception.ErrorDownloadFile;
+import com.elantsev.netology.diplomacloud.model.ExceptionEntity;
 import com.elantsev.netology.diplomacloud.model.FileInCloud;
 import com.elantsev.netology.diplomacloud.service.AuthService;
 import com.elantsev.netology.diplomacloud.service.FileService;
@@ -14,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,22 +45,22 @@ public class CloudController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Token> login(@RequestBody Login login){
+    public ResponseEntity<Token> login(@RequestBody Login login) {
         String res = authService.getToken(login);
-        System.out.println(login);
         return new ResponseEntity<>( new Token(res), HttpStatus.OK);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("auth-token") String authToken) {
         final Boolean isRemove = authService.removeToken(authToken);
-        return new ResponseEntity<>("Success logout", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<FileInCloud>> list(@RequestHeader("auth-token") String authToken,
                                                   @RequestParam("limit") int limit){
-        List<FileInCloud> list = fileService.getFilesList(limit, authToken.substring(7));
+        String token = authToken.substring(7);
+        List<FileInCloud> list = fileService.getFilesList(limit, token);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -65,15 +69,18 @@ public class CloudController {
                                              @RequestParam("filename") String fileName) throws IOException {
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileName);
         File file = new File(fileService.downloadFile(fileName,authToken.substring(7)));
-        System.out.println(file.length());
-        Path path = Paths.get(file.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=" + file.getName())
-                .contentType(mediaType)
-                .contentLength(file.length())
-                .body(resource);
+        try {
+            Path path = Paths.get(file.getAbsolutePath());
+            ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=" + file.getName())
+                    .contentType(mediaType)
+                    .contentLength(file.length())
+                    .body(resource);
+        } catch (Exception e) {
+            throw new ErrorDownloadFile("Controller said: Error download file!");
+        }
 
     }
 

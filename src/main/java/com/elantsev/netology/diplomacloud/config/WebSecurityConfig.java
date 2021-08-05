@@ -55,10 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                //.formLogin()
-                // .loginPage("http://localhost:8086/login")
-                //  .loginProcessingUrl("http://localhost:9999/login")
-               // .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
     }
 }
