@@ -32,7 +32,8 @@ public class FileService {
         }
         String tableName;
         try {
-            tableName = getTableName(jwtTokenProvider.getUserName(token));
+            String userName = jwtTokenProvider.getUserName(token);
+            tableName = getTableName(userName);
         } catch (Exception e) {
             cloudLogger.logError(String.format("Method 'getFilesList' thrown exception %s for unauthorized user", e.toString()));
             throw new ErrorUnauthorized("Service said: Unauthorized error!");
