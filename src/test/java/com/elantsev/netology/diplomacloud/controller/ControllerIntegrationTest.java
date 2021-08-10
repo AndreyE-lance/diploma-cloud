@@ -64,6 +64,7 @@ public class ControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+
    /* @Test
     public void testListIntServerErrorThrow() throws Exception{
         Mockito.when(jwtTokenProvider.getUserName(Mockito.any()))
