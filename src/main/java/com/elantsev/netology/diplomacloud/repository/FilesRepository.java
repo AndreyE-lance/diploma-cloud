@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.util.List;
 
 @Repository
+@Deprecated
 public class FilesRepository {
     private final JdbcTemplate jdbcTemplate;
     final static String SEP = File.separator;
