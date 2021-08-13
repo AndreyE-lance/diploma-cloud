@@ -1,7 +1,6 @@
 package com.elantsev.netology.diplomacloud.repository;
 
 import com.elantsev.netology.diplomacloud.model.FileInCloud;
-import org.hibernate.annotations.SQLInsert;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,9 +11,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 
-
 @Repository
-public interface JpaFilesRepository extends JpaRepository<FileInCloud,String> {
+public interface JpaFilesRepository extends JpaRepository<FileInCloud, String> {
 
     List<FileInCloud> getFilesByUsernameAndDeletedIsFalse(String name);
 
@@ -33,7 +31,8 @@ public interface JpaFilesRepository extends JpaRepository<FileInCloud,String> {
     @Modifying
     @Transactional
     @Query(value = "insert into files(filename, username, size, loaddate, deleted) VALUES (:filename, :username, :filesize, current_timestamp, false)", nativeQuery = true)
-    int insertNewFile(@Param("username") String username, @Param("filename") String filename, @Param("filesize") long filesilze);
+    void insertNewFile(@Param("username") String username, @Param("filename") String filename, @Param("filesize") long filesilze);
+
 
 }
 

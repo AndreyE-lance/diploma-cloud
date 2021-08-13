@@ -59,7 +59,7 @@ public class CloudController {
 
     @GetMapping("/list")
     public ResponseEntity<List<FileInCloud>> list(@RequestHeader("auth-token") String authToken,
-                                                  @RequestParam("limit") int limit){
+                                                  @RequestParam("limit") int limit) throws Exception {
         String token = authToken.substring(7);
         List<FileInCloud> list = fileService.getFilesList(limit, token);
         return new ResponseEntity<>(list, HttpStatus.OK);

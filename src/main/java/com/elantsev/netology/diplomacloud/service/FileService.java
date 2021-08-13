@@ -29,7 +29,7 @@ public class FileService {
         this.cloudLogger = cloudLogger;
     }
 
-    public List<FileInCloud> getFilesList(int limit, String token) {
+    public List<FileInCloud> getFilesList(int limit, String token) throws Exception{
         if (limit <= 0) {
             cloudLogger.logError("Invalid files limit: " + limit);
             throw new ErrorInputData("Service said: Error input data!");
@@ -115,8 +115,6 @@ public class FileService {
 
     public String uploadFile(String fileName, MultipartFile file, String token) {
         String userName = getUserName(token);
-        int result;
-
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
@@ -124,7 +122,7 @@ public class FileService {
                         new BufferedOutputStream(new FileOutputStream(new File(getFullPath(fileName,userName))));
                 stream.write(bytes);
                 stream.close();
-                result = jpaFilesRepository.insertNewFile(userName,fileName,file.getSize());
+                jpaFilesRepository.insertNewFile(userName,fileName,file.getSize());
 
         } catch (Exception e) {
             cloudLogger.logError(String.format("Method 'uploadFile' thrown exception %s File: %s User: %s", e.toString(), fileName, userName));

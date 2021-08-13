@@ -50,7 +50,7 @@ public class CloudControllerTest {
         Assertions.assertEquals(actual, expected);
     }
 
-   /* @Test
+    @Test
     public void testList() throws Exception {
         List<FileInCloud> testList = new  ArrayList<>();
         testList.add(new FileInCloud());
@@ -64,7 +64,7 @@ public class CloudControllerTest {
         ResponseEntity<List<FileInCloud>> expected =
                 new ResponseEntity<>(testList,HttpStatus.OK);
         Assertions.assertEquals(actual,expected);
-    }*/
+    }
 
     @Test
     public void testDelete() throws Exception{
