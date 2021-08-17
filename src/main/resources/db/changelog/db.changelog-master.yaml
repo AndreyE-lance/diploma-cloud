@@ -24,3 +24,8 @@ databaseChangeLog:
       file: migrations/007_Fill_Files_Table.sql
       relativeToChangelogFile: true
 
+  - include:
+      file: migrations/008_Set_Index_Files_Table.sql
+      relativeToChangelogFile: true
+
+
